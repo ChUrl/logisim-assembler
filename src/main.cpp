@@ -1,12 +1,31 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <boost/program_options.hpp>
+#include <iomanip>
 #include "lexer/Lexer.h"
 
 namespace po = boost::program_options;
 
-int main(int argc, char **argv) {
+auto lex(std::string_view input_string, std::vector<Token> tokens) -> bool {
+    Lexer lexer(input_string);
+    while (true) {
+        const Token token = lexer.next();
+        std::cout << std::setw(10) << token.getTypeName() << ": " << static_cast<std::string_view>(token) << std::endl;
+
+        if (token.getType() == Token::UNEXPECTED) {
+            return false;
+        }
+        if (token.getType() == Token::END) {
+            return true;
+        }
+
+        tokens.push_back(token);
+    }
+}
+
+auto main(int argc, char **argv) -> int {
     // Argument parsing straight from the Boost manual: https://www.boost.org/doc/libs/1_60_0/doc/html/program_options/tutorial.html
 
     // Declare the supported options.
@@ -26,6 +45,17 @@ int main(int argc, char **argv) {
         std::cout << desc << std::endl;
         return 1;
     }
+    if (!vm.count("input")) {
+        std::cout << "Did not provide input file!" << std::endl;
+        return -1;
+    }
+    if (!vm.count("output")) {
+        std::cout << "Did not provide output file!" << std::endl;
+        return -1;
+    }
+
+    std::cout << "Input File: " << vm["input"].as<std::string>() << std::endl;
+    std::cout << "Output File: " << vm["output"].as<std::string>() << std::endl;
 
     // Read the input file
     std::ifstream ifs;
@@ -42,7 +72,15 @@ int main(int argc, char **argv) {
     }
     ifs.close();
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+    // Lexing
+    std::cout << "Lexing:" << std::endl;
+    std::vector<Token> tokens;
+    if (!lex(input_string, tokens)) {
+        std::cout << "Lexer Error: Unexpected Token!" << std::endl;
+        return -1;
+    }
+
+    // Parsing
+
     return 0;
 }
