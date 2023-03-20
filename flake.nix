@@ -50,11 +50,8 @@
         bintools = bintools_multi;
       };
     in {
-      # devShell = pkgs.devshell.mkShell ...
-      devShell = pkgs.devshell.mkShell {
-        name = "Logisim Assembler Development Environment";
-
-        packages = with pkgs; [
+      devShells.default = pkgs.mkShell {
+        buildInputs = with pkgs; [
           # Compilers
           bintools
           gcc12
@@ -62,6 +59,9 @@
           # bintools_multi
           # gcc12_multi
           # clang14_multi
+
+          # Libraries
+          boost181
 
           # Native buildinputs
           gnumake
@@ -74,14 +74,44 @@
           cling # To try out my bullshit implementations
           # doxygen # Generate docs + graphs
         ];
-
-        commands = [
-          {
-            name = "ide";
-            help = "Run clion for project";
-            command = "clion &>/dev/null ./ &";
-          }
-        ];
       };
+
+      # TODO: DevShell doesn't propagate buildinputs, so its difficult to find e.g. Boost...
+      # # devShell = pkgs.devshell.mkShell ...
+      # devShell = pkgs.devshell.mkShell {
+      #   name = "Logisim Assembler Development Environment";
+
+      #   packages = with pkgs; [
+      #     # Compilers
+      #     bintools
+      #     gcc12
+      #     clang15
+      #     # bintools_multi
+      #     # gcc12_multi
+      #     # clang14_multi
+
+      #     # Libraries
+      #     boost181
+
+      #     # Native buildinputs
+      #     gnumake
+      #     cmake
+      #     # nasm
+
+      #     # Development
+      #     # bear # To generate compilation database
+      #     gdb
+      #     cling # To try out my bullshit implementations
+      #     # doxygen # Generate docs + graphs
+      #   ];
+
+      #   commands = [
+      #     {
+      #       name = "ide";
+      #       help = "Run clion for project";
+      #       command = "clion &>/dev/null ./ &";
+      #     }
+      #   ];
+      # };
     });
 }
