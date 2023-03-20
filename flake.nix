@@ -15,7 +15,7 @@
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true; # For clion
-        overlays = [devshell.overlay];
+        overlays = [devshell.overlays.default];
       };
 
       # NOTE: Usual 64 bit compilers that don't collide
