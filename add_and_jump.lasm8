@@ -1,0 +1,13 @@
+# Add 5 + 10
+MOV 5, reg1
+MOV 10, reg2
+ADD
+
+# Subtract result - 15
+MOV reg3, reg1
+MOV 15, reg2
+SUB
+
+# Jump to 0 if result == 15
+MOV 0, reg0
+JEQ
