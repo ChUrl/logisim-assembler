@@ -8,6 +8,7 @@
 #include "ast/Node.h"
 #include "parser/Parser.h"
 #include "codegen/PrintObserver.h"
+#include "codegen/CodegenObserver.h"
 
 namespace po = boost::program_options;
 
@@ -92,8 +93,13 @@ auto main(int argc, char **argv) -> int {
     // Parsing
     std::cout << "Parsing:" << std::endl;
     const std::unique_ptr<Node> ast = parse(tokens);
+    PrintObserver(*ast).Observer::traverse(); // Print the AST
 
-    PrintObserver(*ast).Observer::traverse();
+    // Codegen
+    std::cout << "Codegen:" << std::endl;
+    std::string output_string;
+    CodegenObserver(*ast, output_string).Observer::traverse();
+    std::cout << std::hex << output_string << std::endl;
 
     return 0;
 }

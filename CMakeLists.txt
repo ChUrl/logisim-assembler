@@ -18,7 +18,9 @@ add_executable(lasm
         src/ast/nodes/JumpNode.cpp
         src/ast/Observer.cpp
         src/ast/PrefixObserver.cpp
+        src/ast/PostfixObserver.cpp
         src/codegen/PrintObserver.cpp
+        src/codegen/CodegenObserver.cpp
         src/parser/Parser.cpp)
 
 target_link_libraries(lasm Boost::program_options)
