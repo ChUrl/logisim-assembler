@@ -5,24 +5,33 @@
 #include <boost/program_options.hpp>
 #include <iomanip>
 #include "lexer/Lexer.h"
+#include "ast/Node.h"
+#include "parser/Parser.h"
+#include "codegen/PrintObserver.h"
 
 namespace po = boost::program_options;
 
-auto lex(std::string_view input_string, std::vector<Token> tokens) -> bool {
+auto lex(std::string_view input_string, std::vector<Token> &tokens) -> bool {
     Lexer lexer(input_string);
     while (true) {
-        const Token token = lexer.next();
+        Token token = lexer.next();
         std::cout << std::setw(10) << token.getTypeName() << ": " << static_cast<std::string_view>(token) << std::endl;
 
         if (token.getType() == Token::UNEXPECTED) {
             return false;
         }
-        if (token.getType() == Token::END) {
+
+        tokens.push_back(std::move(token));
+
+        if (tokens.back().getType() == Token::END) {
             return true;
         }
-
-        tokens.push_back(token);
     }
+}
+
+auto parse(std::vector<Token> &tokens) -> std::unique_ptr<Node> {
+    Parser parser(tokens);
+    return std::move(parser.parse());
 }
 
 auto main(int argc, char **argv) -> int {
@@ -81,6 +90,10 @@ auto main(int argc, char **argv) -> int {
     }
 
     // Parsing
+    std::cout << "Parsing:" << std::endl;
+    const std::unique_ptr<Node> ast = parse(tokens);
+
+    PrintObserver(*ast).Observer::traverse();
 
     return 0;
 }

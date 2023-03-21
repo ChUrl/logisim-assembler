@@ -8,6 +8,17 @@ find_package(Boost 1.81 COMPONENTS program_options REQUIRED)
 add_executable(lasm
         src/main.cpp
         src/lexer/Token.cpp
-        src/lexer/Lexer.cpp)
+        src/lexer/Lexer.cpp
+        src/ast/Node.cpp
+        src/ast/nodes/RootNode.cpp
+        src/ast/nodes/ConstNode.cpp
+        src/ast/nodes/RegNode.cpp
+        src/ast/nodes/MovNode.cpp
+        src/ast/nodes/AluNode.cpp
+        src/ast/nodes/JumpNode.cpp
+        src/ast/Observer.cpp
+        src/ast/PrefixObserver.cpp
+        src/codegen/PrintObserver.cpp
+        src/parser/Parser.cpp)
 
 target_link_libraries(lasm Boost::program_options)
