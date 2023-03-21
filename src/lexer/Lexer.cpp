@@ -45,9 +45,10 @@ auto is_alphabetical(const char character) -> bool {
 }
 
 auto is_mnemonic(const Token &token) -> bool {
-    // TODO: Add other mnemonics
+    // TODO: Move this to a separate header
     const std::vector<std::string> mnemonics = {"MOV",
-                                                "ADD"};
+                                                "AND", "OR", "NAND", "NOR", "ADD", "SUB",
+                                                "JEQ", "JLE", "JLEQ", "JNEQ", "JGR", "JGEQ"};
 
     return std::find(mnemonics.begin(), mnemonics.end(), static_cast<std::string_view>(token))
            != mnemonics.end();

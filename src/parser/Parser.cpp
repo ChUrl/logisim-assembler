@@ -6,13 +6,13 @@
 #include "../ast/nodes/MovNode.h"
 #include "../ast/nodes/ConstNode.h"
 #include "../ast/nodes/AluNode.h"
-#include <map>
+#include "../ast/nodes/JumpNode.h"
 
 // ! Helper Functions
 
 // ! Public Functions
 
-Parser::Parser(const std::vector<Token> &tokens) : tokens(tokens), position(tokens.begin()) {}
+Parser::Parser(const std::vector<Token> &tokens) : position(tokens.begin()) {}
 
 auto Parser::parse() -> std::unique_ptr<Node> {
     while (peek().getType() != Token::END) {
@@ -20,16 +20,7 @@ auto Parser::parse() -> std::unique_ptr<Node> {
             throw "Parser Error: Expected Mnemonic!";
         }
 
-        // TODO: Put these functions in a map, mapped to the mnemonic name string
-        if (static_cast<std::string_view>(peek()) == "MOV") {
-            mov();
-            continue;
-        }
-
-        if (static_cast<std::string_view>(peek()) == "ADD") {
-            alu();
-            continue;
-        }
+        eaters[static_cast<std::string>(peek())](*this);
     }
 
     return std::move(ast);
@@ -54,19 +45,17 @@ void Parser::mov() {
     uint8_t source = 0; // Load from reg0
     if (peek().getType() == Token::NUMBER) {
         ast->addChild(std::move(std::make_unique<ConstNode>(static_cast<uint8_t>(peek())))); // Load constant to reg0
-    } else if (peek().getType() == Token::IDENTIFIER) {
-        source = static_cast<uint8_t>(peek());
+    } else if (peek().getType() == Token::IDENTIFIER && static_cast<std::string_view>(peek().subtoken(0, 3)) == "reg") {
+        source = static_cast<uint8_t>(peek().subtoken(3, 1));
     } else {
         throw "Parser Error: Expected Constant or Register!";
     }
     get(); // Eat source
 
-    const Token identifier = peek().subtoken(0, 3);
-    const Token reg = peek().subtoken(3, 1); // Get reg number
-    if (peek().getType() != Token::IDENTIFIER || static_cast<std::string_view>(identifier) != "reg") {
+    if (peek().getType() != Token::IDENTIFIER || static_cast<std::string_view>(peek().subtoken(0, 3)) != "reg") {
         throw "Parser Error: Expected Register!";
     }
-    auto target = static_cast<uint8_t>(reg);
+    auto target = static_cast<uint8_t>(peek().subtoken(3, 1));
     get(); // Eat target
 
     ast->addChild(std::move(std::make_unique<MovNode>(source, target)));
@@ -88,4 +77,22 @@ void Parser::alu() {
     }
 
     ast->addChild(std::move(std::make_unique<AluNode>(aluMap[static_cast<std::string>(get())]))); // Eat alu
+}
+
+void Parser::jmp() {
+    std::map<std::string, JumpNode::JumpOperation> jmpMap = {{"JEQ", JumpNode::EQUAL_ZERO},
+                                                             {"JLE", JumpNode::LESS_ZERO},
+                                                             {"JLEQ", JumpNode::LESS_EQUAL_ZERO},
+                                                             {"JNEQ", JumpNode::NOT_ZERO},
+                                                             {"JGR", JumpNode::GREATER_ZERO},
+                                                             {"JGEQ", JumpNode::GREATER_EQUAL_ZERO}};
+
+    if (peek().getType() != Token::MNEMONIC) {
+        throw "Parser Error: Expected Mnemonic!";
+    }
+    if (!jmpMap.contains(static_cast<std::string>(peek()))) {
+        throw "Parser Error: Invalid JMP operation!";
+    }
+
+    ast->addChild(std::move(std::make_unique<JumpNode>(jmpMap[static_cast<std::string>(get())]))); // Eat jmp
 }
