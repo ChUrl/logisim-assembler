@@ -1,0 +1,13 @@
+# Write "0123456789..." in ASCII to the output
+MOV 48, output
+MOV 49, output
+MOV 50, output
+MOV 51, output
+MOV 52, output
+MOV 53, output
+MOV 54, output
+MOV 55, output
+MOV 56, output
+MOV 57, output
+MOV 0, reg0
+JMP
