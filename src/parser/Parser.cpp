@@ -45,20 +45,37 @@ void Parser::mov() {
     uint8_t source = 0; // Load from reg0
     if (peek().getType() == Token::NUMBER) {
         ast->addChild(std::move(std::make_unique<ConstNode>(static_cast<uint8_t>(peek())))); // Load constant to reg0
-    } else if (peek().getType() == Token::IDENTIFIER && static_cast<std::string_view>(peek().subtoken(0, 3)) == "reg") {
-        source = static_cast<uint8_t>(peek().subtoken(3, 1));
+    } else if (peek().getType() == Token::IDENTIFIER) {
+        if (static_cast<std::string_view>(peek().subtoken(0, 3)) == "reg") {
+            source = static_cast<uint8_t>(peek().subtoken(3, 1));
+        } else if (static_cast<std::string_view>(peek()) == "input") {
+            source = 6;
+        }
     } else {
         throw "Parser Error: Expected Constant or Register!";
     }
     get(); // Eat source
 
-    if (peek().getType() != Token::IDENTIFIER || static_cast<std::string_view>(peek().subtoken(0, 3)) != "reg") {
+    uint8_t target = 0;
+    if (peek().getType() == Token::IDENTIFIER) {
+        if (static_cast<std::string_view>(peek().subtoken(0, 3)) == "reg") {
+            target = static_cast<uint8_t>(peek().subtoken(3, 1));
+        } else if (static_cast<std::string_view>(peek()) == "output") {
+            target = 6;
+        }
+    } else {
         throw "Parser Error: Expected Register!";
     }
-    auto target = static_cast<uint8_t>(peek().subtoken(3, 1));
     get(); // Eat target
 
-    ast->addChild(std::move(std::make_unique<MovNode>(source, target)));
+    if (source > 6 || target > 6) {
+        throw "Parser Error: Invalid Register!";
+    }
+
+    if (source != target) {
+        // This happens on e.g. MOV 10, reg0
+        ast->addChild(std::move(std::make_unique<MovNode>(source, target)));
+    }
 }
 
 void Parser::alu() {
@@ -80,9 +97,11 @@ void Parser::alu() {
 }
 
 void Parser::jmp() {
-    std::map<std::string, JumpNode::JumpOperation> jmpMap = {{"JEQ", JumpNode::EQUAL_ZERO},
+    std::map<std::string, JumpNode::JumpOperation> jmpMap = {{"JMP", JumpNode::ALWAYS},
+                                                             {"JEQ", JumpNode::EQUAL_ZERO},
                                                              {"JLE", JumpNode::LESS_ZERO},
                                                              {"JLEQ", JumpNode::LESS_EQUAL_ZERO},
+                                                             {"NOP", JumpNode::NEVER}, // TODO: ?
                                                              {"JNEQ", JumpNode::NOT_ZERO},
                                                              {"JGR", JumpNode::GREATER_ZERO},
                                                              {"JGEQ", JumpNode::GREATER_EQUAL_ZERO}};
