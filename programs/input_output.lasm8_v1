@@ -1,0 +1,5 @@
+# Add 10 to the input number, then output the result
+MOV input, reg1
+MOV 10, reg2
+ADD
+MOV reg3, output

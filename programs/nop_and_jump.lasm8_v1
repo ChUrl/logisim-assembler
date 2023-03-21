@@ -1,0 +1,4 @@
+# Endless NOP loop
+NOP
+MOV 0, reg0
+JMP
