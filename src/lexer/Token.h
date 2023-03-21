@@ -35,9 +35,9 @@ public:
 
     auto operator=(const Token &copy) -> Token & = default;
 
-    Token(Token &&move) = default;
+    Token(Token &&move) noexcept = default;
 
-    auto operator=(Token &&move) -> Token & = default;
+    auto operator=(Token &&move) noexcept -> Token & = default;
 
     ~Token() = default;
 
@@ -45,13 +45,16 @@ public:
 
     [[nodiscard]] auto getTypeName() const -> std::string;
 
+    [[nodiscard]] auto subtoken(uint8_t pos, uint8_t len) const -> Token;
+
     explicit operator std::string_view() const;
+
+    explicit operator std::string() const;
+
+    explicit operator uint8_t() const;
 
 private:
     Type type;
-
-    // ! The Token only contains a reference to the string kept inside the Lexer.
-    // ! If the Lexer is gone, all Tokens will be invalid!
     std::string lexeme;
 };
 
