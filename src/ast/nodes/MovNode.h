@@ -6,7 +6,6 @@
 #define LOGISIMASSEMBLER_MOVNODE_H
 
 #include "../Node.h"
-#include "RegNode.h"
 
 class MovNode : public Node {
 public:
