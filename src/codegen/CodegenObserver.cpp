@@ -6,15 +6,19 @@
 #include <boost/format.hpp>
 #include <iostream>
 
-CodegenObserver::CodegenObserver(const Node &node, std::string &output_string)
+CodegenObserver::CodegenObserver(const Node &node, std::vector<std::string> &output_string)
         : PostfixObserver(node), output_string(output_string) {}
 
 void CodegenObserver::action(const Node &node) {
-    const uint8_t opcode = node.compile();
+    const uint8_t dec = node.compile();
     const uint8_t INVALID = -1;
 
-    if (opcode != INVALID) {
-        output_string += (boost::format("%x") % static_cast<uint32_t>(opcode)).str(); // uint8_t is always interpreted as char
-        output_string += ' ';
+    if (dec != INVALID) {
+        // uint8_t is always interpreted as char, so cast to uint32_t
+        const std::string hex = (boost::format("%x") % static_cast<uint32_t>(dec)).str();
+        if (hex.empty() || hex.size() > 2) {
+            throw "Compile Error: Resulting instruction has invalid size!";
+        }
+        output_string.push_back(hex.length() == 2 ? hex : "0" + hex);
     }
 }

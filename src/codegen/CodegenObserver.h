@@ -9,7 +9,7 @@
 
 class CodegenObserver : public PostfixObserver {
 public:
-    CodegenObserver(const Node &node, std::string &output_string);
+    CodegenObserver(const Node &node, std::vector<std::string> &output_string);
 
     ~CodegenObserver() override = default;
 
@@ -17,7 +17,7 @@ protected:
     void action(const Node &node) override;
 
 private:
-    std::string &output_string;
+    std::vector<std::string> &output_string;
 };
 
 #endif //LOGISIMASSEMBLER_CODEGENOBSERVER_H
