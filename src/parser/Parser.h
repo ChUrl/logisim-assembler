@@ -43,9 +43,11 @@ private:
                                                                    {"NOR",  &Parser::alu},
                                                                    {"ADD",  &Parser::alu},
                                                                    {"SUB",  &Parser::alu},
+                                                                   {"JMP",  &Parser::jmp},
                                                                    {"JEQ",  &Parser::jmp},
                                                                    {"JLE",  &Parser::jmp},
                                                                    {"JLEQ", &Parser::jmp},
+                                                                   {"NOP",  &Parser::jmp},
                                                                    {"JNEQ", &Parser::jmp},
                                                                    {"JGR",  &Parser::jmp},
                                                                    {"JGEQ", &Parser::jmp}};

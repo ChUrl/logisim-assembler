@@ -48,7 +48,7 @@ auto is_mnemonic(const Token &token) -> bool {
     // TODO: Move this to a separate header
     const std::vector<std::string> mnemonics = {"MOV",
                                                 "AND", "OR", "NAND", "NOR", "ADD", "SUB",
-                                                "JEQ", "JLE", "JLEQ", "JNEQ", "JGR", "JGEQ"};
+                                                "JMP", "JEQ", "JLE", "JLEQ", "NOP", "JNEQ", "JGR", "JGEQ"};
 
     return std::find(mnemonics.begin(), mnemonics.end(), static_cast<std::string_view>(token))
            != mnemonics.end();
