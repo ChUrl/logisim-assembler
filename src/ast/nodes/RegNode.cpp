@@ -11,5 +11,9 @@ auto RegNode::compile() const -> uint8_t {
         throw "Compile Error: Invalid Register!";
     }
 
+    return -1;
+}
+
+auto RegNode::getRegister() const -> uint8_t {
     return reg;
 }

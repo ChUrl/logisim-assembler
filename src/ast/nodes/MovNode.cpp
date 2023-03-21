@@ -4,19 +4,8 @@
 
 #include "MovNode.h"
 
-MovNode::MovNode(std::unique_ptr<Node> source, std::unique_ptr<Node> target) {
-    children.push_back(std::move(source));
-    children.push_back(std::move(target));
-}
-
-auto MovNode::source() const -> Node & {
-    return *children[0];
-}
-
-auto MovNode::target() const -> Node & {
-    return *children[1];
-}
+MovNode::MovNode(uint8_t source, uint8_t target) : source(source), target(target) {}
 
 auto MovNode::compile() const -> uint8_t {
-    return (COPY & 0b11) << 6 | (source().compile() & 0b111) << 3 | (target().compile() & 0b111);
+    return (COPY & 0b11) << 6 | (source & 0b111) << 3 | (target & 0b111);
 }

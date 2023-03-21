@@ -15,6 +15,8 @@ public:
 
     [[nodiscard]] auto compile() const -> uint8_t override;
 
+    [[nodiscard]] auto getRegister() const -> uint8_t;
+
 private:
     uint8_t reg;
 };

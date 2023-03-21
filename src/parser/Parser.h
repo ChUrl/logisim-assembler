@@ -9,6 +9,7 @@
 #include <vector>
 #include "../lexer/Token.h"
 #include "../ast/Node.h"
+#include "../ast/nodes/RootNode.h"
 
 class Parser {
 public:
@@ -23,14 +24,14 @@ private:
 
     auto get() -> const Token &;
 
-    auto mov() -> std::unique_ptr<Node>;
+    void mov();
 
-    auto alu() -> std::unique_ptr<Node>;
+    void alu();
 
 private:
     const std::vector<Token> &tokens;
-
     std::vector<Token>::const_iterator position;
+    std::unique_ptr<Node> ast = std::make_unique<RootNode>();
 };
 
 #endif //LOGISIMASSEMBLER_PARSER_H

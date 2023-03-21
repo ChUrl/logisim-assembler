@@ -5,5 +5,5 @@
 #include "RootNode.h"
 
 auto RootNode::compile() const -> uint8_t {
-    return 0;
+    return -1;
 }

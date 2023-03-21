@@ -6,18 +6,19 @@
 #define LOGISIMASSEMBLER_MOVNODE_H
 
 #include "../Node.h"
+#include "RegNode.h"
 
 class MovNode : public Node {
 public:
-    MovNode(std::unique_ptr<Node> source, std::unique_ptr<Node> target);
+    MovNode(uint8_t source, uint8_t target);
 
     ~MovNode() override = default;
 
-    auto source() const -> Node &;
-
-    auto target() const -> Node &;
-
     [[nodiscard]] auto compile() const -> uint8_t override;
+
+private:
+    uint8_t source;
+    uint8_t target;
 };
 
 #endif //LOGISIMASSEMBLER_MOVNODE_H
